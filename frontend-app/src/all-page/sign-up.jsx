@@ -6,6 +6,7 @@ import Form from "../components/form"
 import Input from "../components/Input"
 import ParameterBtn from "../components/parameterBtn"
 import SimpleBtn from "../components/simpleButton"
+import ValidateBanner from "../components/validateBanner"
 import {useState} from "react"
 
 function SignUp(){
@@ -23,7 +24,10 @@ function SignUp(){
         password:"",
         userType:""
     })
-
+    const [errorBanner,setErrorBanner] = useState({
+        error:false,
+        message:""
+    })
     const commonInput = `border-2 w-full py-2 outline-none pl-2 border-box rounded-md`
     const commonBtnStyle = `px-5 py-2 rounded-md cursor-pointer`
     /*nextBtnLogic = ()=>{
@@ -41,11 +45,57 @@ function SignUp(){
         
     }
 
+    const handleSignup = (evt)=>{
+        evt.preventDefault()
+        try{
+            const {username,password,userType} = userData
+            if(username.trim() ==""){
+                throw "enter valid username"
+            }else if(password.trim()==""){
+                throw "enter password"
+            }else if(userType.trim()==""){
+                throw "select user type"
+            }else{
+                alert("data success")
+            }
+        }catch(err){
+            setErrorBanner({
+                error:true,
+                message:err
+            })
+            return false
+        }
+    }
 
     const nextPart = (part1State,part2State)=>{
         //function for moving to the next step of multi part form
-        setPart1(part1State)
-        setPart2(part2State)
+        try{
+            const {fullNames,email,cellphone} = userData
+            if(fullNames.trim() === ""){
+                throw "enter your fullNames"
+            }else if(!email.endsWith('.com')){
+                throw "enter valid email"
+            }else if(cellphone.length !== 10){
+                throw "enter valid cellphone number"
+            }
+            setPart1(part1State)
+            setPart2(part2State)
+        }catch(err){
+            setErrorBanner({
+                error:true,
+                message:err
+            })
+            return false
+        }
+
+    }
+
+
+    const closeErrorModal = ()=>{
+        setErrorBanner({
+            error:false,
+            message:""
+        })
     }
 
     const prevPart = (part1State,part2State)=>{
@@ -132,11 +182,13 @@ function SignUp(){
                             <SimpleBtn btnType={'submit'}
                             btnName={'sign-up-btn'}
                             btnId={'sign-up-btn'} 
-                            innerText={'Sign up'} 
+                            innerText={'Sign up'}
+                            handleClick={handleSignup} 
                             btnStyle={`${commonBtnStyle} ml-2`}
                             themeColor={themeColor}/>
                         </div>}
                     </Form>
+                    <ValidateBanner isError={errorBanner.error} errorMessage={errorBanner.message} handleClick={closeErrorModal}/>
                 </div>
             </div>
         </div>
