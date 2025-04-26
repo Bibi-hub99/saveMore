@@ -5,6 +5,7 @@ import {useMyContext} from "../contextAPI"
 import Form from "../components/form"
 import Input from "../components/Input"
 import SimpleBtn from "../components/simpleButton"
+import ValidateBanner from "../components/validateBanner"
 import {useState} from "react"
 
 function LogIn(){
@@ -16,7 +17,10 @@ function LogIn(){
         userType:"",
         showPass:false
     })
-    //const [showPass,setShowPass] = useState(false)
+    const [errorBanner,setErrorBanner] = useState({
+        error:false,
+        message:""
+    })
 
     const commonInput = `border-2 w-full py-2 outline-none pl-2 border-box rounded-md`
 
@@ -32,6 +36,34 @@ function LogIn(){
         })
     }
 
+    const handleLogIn = (evt)=>{
+        evt.preventDefault()
+        try{
+            const {username,password,userType} = userData
+            if(username.trim()==""){
+                throw "enter username"
+            }else if(password.trim()==""){
+                throw "enter password"
+            }else if(userType.trim()==""){
+                throw "enter user type"
+            }else{
+                alert("success")
+            }
+        }catch(err){
+            setErrorBanner({
+                error:true,
+                message:err
+            })
+            return false
+        }
+    }
+
+    const closeErrorBanner = ()=>{
+        setErrorBanner({
+            error:false,
+            message:"" 
+        })
+    }
 
     return (
         <div>
@@ -71,10 +103,11 @@ function LogIn(){
                         <Input inputType={"radio"} inputName={"userType"} inputId={"seller"} inputValue={"seller"} inputChange={handleChange}/><label htmlFor={"seller"}> Seller </label>
                         <Input inputType={"radio"} inputName={"userType"} inputId={"buyer"} inputValue={"buyer"} inputChange={handleChange}/><label htmlFor={"buyer"}> Buyer</label>
                         <br></br>
-                        <SimpleBtn btnType={'submit'} btnId={'log-in-btn'} innerText={'Log In'} btnStyle={`bg-black text-white py-2 px-5 rounded-lg cursor-pointer mt-2`}/>
+                        <SimpleBtn btnType={'submit'} btnId={'log-in-btn'} innerText={'Log In'} handleClick={handleLogIn} btnStyle={`bg-black text-white py-2 px-5 rounded-lg cursor-pointer mt-2`}/>
                     </Form>
                 </div>
             </div>
+            <ValidateBanner isError={errorBanner.error} errorMessage={errorBanner.message} handleClick={closeErrorBanner}/>
 
         </div>
     )
