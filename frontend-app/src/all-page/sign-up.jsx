@@ -8,6 +8,7 @@ import ParameterBtn from "../components/parameterBtn"
 import SimpleBtn from "../components/simpleButton"
 import ValidateBanner from "../components/validateBanner"
 import {useState} from "react"
+import {signUp} from "../CRUD/account"
 
 function SignUp(){
 
@@ -45,10 +46,10 @@ function SignUp(){
         
     }
 
-    const handleSignup = (evt)=>{
+    const handleSignup = async(evt)=>{
         evt.preventDefault()
         try{
-            const {username,password,userType} = userData
+            const {fullNames,email,cellphone,username,password,userType} = userData
             if(username.trim() ==""){
                 throw "enter valid username"
             }else if(password.trim()==""){
@@ -56,7 +57,11 @@ function SignUp(){
             }else if(userType.trim()==""){
                 throw "select user type"
             }else{
-                alert("data success")
+                const response = await signUp({
+                    fullNames,email,cellphone,
+                    username,password,userType
+                })
+                console.log(response)
             }
         }catch(err){
             setErrorBanner({
