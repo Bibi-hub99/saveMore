@@ -10,6 +10,7 @@ import {useState} from "react"
 import {logIn} from "../CRUD/account"
 import Loading from "../components/loading"
 import LoadingError from "../components/loadingError"
+import {Navigate} from "react-router-dom"
 
 function LogIn(){
 
@@ -21,6 +22,7 @@ function LogIn(){
         showPass:false
     })
     const [errorBanner,setErrorBanner] = useState({
+
         error:false,
         message:""
     })
@@ -28,6 +30,10 @@ function LogIn(){
         isLoading:false,
         isError:false,
     })
+    const [isLogged,setIsLogged] = useState({
+        success:false,
+        path:""
+    });
 
     const commonInput = `border-2 w-full py-2 outline-none pl-2 border-box rounded-md`
 
@@ -71,6 +77,7 @@ function LogIn(){
                         }
                     })
                     return data
+
                 }).catch((err)=>{
                     setRequestState({
                         isLoading:false,
@@ -78,7 +85,17 @@ function LogIn(){
                     })
                 })
 
-                console.log(response)
+                if(response.success === true){
+                    setIsLogged({
+                        success:response.success,
+                        path:response.userPath
+                    })                
+                }else{
+                    setErrorBanner({
+                        error:true,
+                        message:"Incorrect login credentials"
+                    })
+                }
             
             }
         }catch(err){
@@ -95,6 +112,10 @@ function LogIn(){
             error:false,
             message:"" 
         })
+    }
+
+    if(isLogged.success){
+        return <Navigate to={isLogged.path}/>
     }
 
     return (

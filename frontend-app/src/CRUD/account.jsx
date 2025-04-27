@@ -13,6 +13,8 @@ export const signUp = async({fullNames,email,cellphone,username,password,userTyp
             userType
         })
 
+        return response
+
     }catch(err){
         console.log(err)
         return false
