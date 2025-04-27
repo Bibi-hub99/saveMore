@@ -46,8 +46,6 @@ function SignUp(){
         
     }
 
-    console.log(userData)
-
     const handleSignup = async(evt)=>{
         evt.preventDefault()
         try{

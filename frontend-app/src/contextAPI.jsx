@@ -2,6 +2,7 @@ import {createContext,useContext} from "react"
 import { FaBars } from "react-icons/fa6";
 import { GoSearch } from "react-icons/go";
 import { FaArrowLeftLong } from "react-icons/fa6";
+import { ImSpinner8 } from "react-icons/im";
 
 
 const Context = createContext()
@@ -14,6 +15,7 @@ const sharedValues = {
     barsIcon:<FaBars className={'block'}/>,
     searchIcon:<GoSearch/>,
     backIcon:<FaArrowLeftLong className={'inline'}/>,
+    spinnerIcon:<ImSpinner8 className={'inline'}/>,
     themeColor:"#1877F2",
     responsiveWidth:'w-[97%] mx-auto'
 }
