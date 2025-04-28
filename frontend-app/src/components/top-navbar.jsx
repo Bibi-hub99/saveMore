@@ -5,7 +5,8 @@ function TopNavbar(props){
     const {barsIcon,responsiveWidth} = useMyContext()
 
     const topNavStyle = {
-        boxShadow:'2px 3px 5px lightgray'
+        boxShadow:'2px 3px 5px lightgray',
+        zIndex:props.zIndex
     }
 
     return (
