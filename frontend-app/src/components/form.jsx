@@ -1,7 +1,7 @@
 function Form(props){
 
     return (
-        <form name={props.formName} autoComplete="off" encType="multipart/form-data">
+        <form name={props.formName} className={props.formStyle} autoComplete="off" encType="multipart/form-data">
             {
                 props.children
             }

@@ -9,12 +9,15 @@ import SimpleBtn from "../components/simpleButton"
 import ValidateBanner from "../components/validateBanner"
 import {useState} from "react"
 import {signUp} from "../CRUD/account"
+import Loading from "../components/loading"
+import LoadingError from "../components/loadingError"
+import {Navigate} from "react-router-dom"
 
 function SignUp(){
 
     //sign up page the user navigates to when clicking sign up link
 
-    const {backIcon,responsiveWidth,themeColor} = useMyContext()
+    const {backIcon,responsiveWidth,themeColor,spinnerIcon} = useMyContext()
     const [part1,setPart1] = useState(true)
     const [part2,setPart2] = useState(false)
     const [userData,setUserData] = useState({
@@ -28,6 +31,14 @@ function SignUp(){
     const [errorBanner,setErrorBanner] = useState({
         error:false,
         message:""
+    })
+    const [requestState,setRequestState] = useState({
+        isLoading:false,
+        isError:false
+    })
+    const [isLogged,setIsLogged] = useState({
+        success:false,
+        path:""
     })
     const commonInput = `border-2 w-full py-2 outline-none pl-2 border-box rounded-md`
     const commonBtnStyle = `px-5 py-2 rounded-md cursor-pointer`
@@ -57,12 +68,46 @@ function SignUp(){
             }else if(userType.trim()==""){
                 throw "select user type"
             }else{
+
+                setRequestState((oldValue)=>{
+                    return {...oldValue,
+                        isLoading:true}
+                })
+
                 const response = await signUp({
                     fullNames,email,cellphone,
                     username,password,userType
+                }).then(({data})=>{
+                    setRequestState((oldValue)=>{
+                        return {
+                            isLoading:false,
+                            isError:false
+                        }
+                    })
+                    return data;
+                }).catch((err)=>{
+                    setRequestState((oldValue)=>{
+                        return {
+                            isLoading:false,
+                            isError:true
+                        }
+                    })
                 })
+
+                if(response.success === true){
+                    setIsLogged({
+                        success:response.success,
+                        path:response.userPath
+                    })
+                }else{
+                    setErrorBanner({
+                        error:true,
+                        message:"Your sign up could not be completed username might already exist change username and refresh"
+                    })
+                }
                 console.log(response)
             }
+            
         }catch(err){
             setErrorBanner({
                 error:true,
@@ -108,6 +153,10 @@ function SignUp(){
         setPart1(part1State)
     }
 
+    if(isLogged.success){
+        return <Navigate to={isLogged.path}/>
+    }
+
     return (
         <div>
             <TopNavbar topNavStyle={'bg-black'}>
@@ -123,6 +172,9 @@ function SignUp(){
                 </div>
             </TopNavbar>
             <div className={`h-[100vh] ${responsiveWidth} flex flex-col justify-center`}>
+                {requestState.isLoading && <Loading loadingIcon={spinnerIcon} loadingText={'Waiting for response...'} loadingStyle={`text-center font-bold -mt-30`}/>}
+                {requestState.isLoading === false && requestState.isError === false && 
+            
                 <div className={'-mt-26 md:w-[50%] md:mx-auto'}>
                     <Form formName={'sign-up-form'}>
                         {part1 && <div>
@@ -193,9 +245,10 @@ function SignUp(){
                             themeColor={themeColor}/>
                         </div>}
                     </Form>
-                    <ValidateBanner isError={errorBanner.error} errorMessage={errorBanner.message} handleClick={closeErrorModal}/>
-                </div>
+                </div>}
             </div>
+            <ValidateBanner isError={errorBanner.error} errorMessage={errorBanner.message} handleClick={closeErrorModal}/>
+
         </div>
     )
 
